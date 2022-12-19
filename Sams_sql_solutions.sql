@@ -164,7 +164,30 @@ select prod_name, max(prod_price) as max_price
 from products
 where prod_price <= 10;
 
+-- ============================================================
+-- Lesson 10: Grouping Data
+-- 1. Get the number of lines (as order_lines) for each order_num. Sort by order_lines. 
 
+select order_item, count(*) as order_lines 
+from orderitems
+group by order_item
+order by order_lines;
+
+-- 2. Return a field called cheapest_item which contains the lowest cost item for each vendor.
+-- sort from lowest to highest  cost
+
+select vend_id, min(prod_price) as cheapest_item
+from products
+group by vend_id
+order by prod_price;
+
+-- 3. Return order number for all orders of at least 100 items.
+
+select * from orderitems;
+
+select order_num 
+from orderitems
+where quantity >= 100;
 
 
 
