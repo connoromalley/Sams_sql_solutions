@@ -189,11 +189,89 @@ select order_num
 from orderitems
 where quantity >= 100;
 
+-- 4. Get order number for all orders that cost at least 1000. Sort by order number.
+
+select order_num, sum(quantity * item_price) as total
+from orderitems
+group by order_num
+having sum(quantity * item_price) >= 1000
+order by order_num;
+
+-- Lesson 11: Working with subqueries
+
+-- 1. Using a subquery, get list of cust_id who bought items that cost $10 or more. 
+-- get order_num from orderitems and cust_id from orders
+
+select cust_id
+from orders
+where order_num in (select order_num from orderitems where item_price >= 10);
+
+-- 2. Get the dates for when product BR01 was ordered. Write a subquery
+-- for which orders in orderitems bought BR01. Return cust_id and order_date for each.
+-- sort by order date
+select * from orderitems;
+select * from orders;	
+
+select cust_id, order_date
+from orders
+where order_num in (select order_num from orderitems where prod_id = 'BR01')
+order by order_date; 
+
+-- 3. Update previous challenge to return cust_email in customers table for any customers
+-- who purchased items with prod_id BR01. Hint: the innermost select statement returns order_num
+-- from orderitems. the middle one returns cust_id from customers.
+
+select cust_email
+from customers
+where cust_id in (select cust_id 
+					from orders where order_num in (select order_num 
+														from  orderitems where prod_id = 'BR01'));
+
+-- 4. Get a list of cust_id's with total amount they have ordered. 
+-- cust_id from orders and total_ordered using subquery to return total 
+-- of orders for each customer. sort by amount spent (most to least).
+
+select cust_id from orders;
+
+select cust_id, (select sum(quantity * item_price) 
+				from orderitems 
+				where order_num in (select order_num from orders where orders.cust_id = customers.cust_id)) as total
+from customers
+order by total desc;
+
+
+-- 5. Get all product names prod_name from products along with a calculated
+-- column named quant_sold containing the total number of this item sold
+-- (retrieved using subquery and a sum (quantity) on orderitems table.
+
+
+select prod_name, (select sum(quantity) 
+					from orderitems
+                    where orderitems.prod_id = products.prod_id) as quant_sold
+from products;
+
+
+-- ==============================================================================
+-- Lesson 12 Joins
+-- 1. Return cust_name from customers and related order_num from orders.
+-- sort first by cust_name then by order_num. 
+-- do this twice. once by equijoin and once by inner join.
+
+-- equijoin
+select cust_name, order_num
+from customers, orders
+where customers.cust_id = orders.cust_id
+order by cust_name, order_num;
+
+-- ansi inner join syntax
+select cust_name, order_num
+from customers inner join orders
+on customers.cust_id = orders.cust_id
+order by cust_name, order_num;
 
 
 
 
- 
 
 
 
